@@ -1,578 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Music Player</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-         :root {
-            --primary-color: #8e44ad;
-            --secondary-color: #9b59b6;
-            --background-color: #f9f9f9;
-            --card-color: #ffffff;
-            --text-color: #333333;
-            --progress-color: #8e44ad;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .music-player {
-            background-color: var(--card-color);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
-            padding: 30px;
-            position: relative;
-        }
-        
-        .song-info {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .song-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--text-color);
-        }
-        
-        .artist-name {
-            font-size: 16px;
-            color: #777;
-            margin-bottom: 20px;
-        }
-        
-        .album-art {
-            width: 250px;
-            height: 250px;
-            border-radius: 15px;
-            margin: 0 auto 20px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .album-art img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .progress-container {
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            height: 6px;
-            width: 100%;
-            margin-bottom: 15px;
-            cursor: pointer;
-        }
-        
-        .progress {
-            background-color: var(--primary-color);
-            border-radius: 5px;
-            height: 100%;
-            width: 0%;
-            transition: width 0.1s linear;
-        }
-        
-        .time-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #777;
-            margin-bottom: 25px;
-        }
-        
-        .controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-        
-        .controls button {
-            background: none;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            color: var(--text-color);
-            font-size: 16px;
-            padding: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .controls button:hover {
-            color: var(--primary-color);
-        }
-        
-        .controls .play-pause {
-            background-color: var(--primary-color);
-            color: white !important;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 24px !important;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 10px rgba(142, 68, 173, 0.3);
-        }
-        
-        .controls .play-pause:hover {
-            background-color: var(--secondary-color);
-            color: white !important;
-            transform: scale(1.05);
-        }
-        
-        .volume-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .volume-icon {
-            margin-right: 10px;
-            color: var(--text-color);
-            font-size: 18px;
-        }
-        
-        .volume-slider {
-            flex: 1;
-            height: 5px;
-            -webkit-appearance: none;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            outline: none;
-        }
-        
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            cursor: pointer;
-        }
-        
-        .playlist-toggle {
-            text-align: center;
-            margin-top: 20px;
-            color: var(--primary-color);
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .playlist-toggle i {
-            margin-right: 5px;
-        }
-        
-        .playlist {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease;
-            margin-top: 10px;
-        }
-        
-        .playlist.show {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .playlist-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        
-        .playlist-item:hover {
-            background-color: #f0f0f0;
-        }
-        
-        .playlist-item.active {
-            background-color: rgba(142, 68, 173, 0.1);
-            color: var(--primary-color);
-        }
-        
-        .playlist-item-number {
-            margin-right: 10px;
-            font-weight: 600;
-            color: #777;
-        }
-        
-        .playlist-item-info {
-            flex: 1;
-        }
-        
-        .playlist-item-title {
-            font-weight: 500;
-            margin-bottom: 2px;
-        }
-        
-        .playlist-item-artist {
-            font-size: 14px;
-            color: #777;
-        }
-        
-        .playlist-item-duration {
-            color: #777;
-            font-size: 14px;
-        }
-        
-        .playlist-item-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 5px;
-            margin-right: 10px;
-            overflow: hidden;
-        }
-        
-        .playlist-item-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        @media (max-width: 600px) {
-            .music-player {
-                padding: 20px;
-            }
-            .album-art {
-                width: 200px;
-                height: 200px;
-            }
-            .controls .play-pause {
-                width: 50px;
-                height: 50px;
-                font-size: 20px !important;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vishwa Music Player</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root{
+    --primary:#00f5ff;
+    --secondary:#ff00ff;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:linear-gradient(-45deg,#0f0c29,#302b63,#24243e,#000000);
+    background-size:400% 400%;
+    animation:bg 12s ease infinite;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+@keyframes bg{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+.player{
+    width:420px;
+    padding:25px;
+    border-radius:25px;
+    backdrop-filter:blur(20px);
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.2);
+    box-shadow:0 0 40px rgba(0,255,255,0.3);
+    color:white;
+}
+
+.album{
+    width:200px;
+    height:200px;
+    margin:20px auto;
+    border-radius:50%;
+    overflow:hidden;
+    box-shadow:0 0 25px var(--primary);
+}
+
+.album img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    animation:rotate 10s linear infinite;
+    animation-play-state:paused;
+}
+
+@keyframes rotate{
+    from{transform:rotate(0deg)}
+    to{transform:rotate(360deg)}
+}
+
+h2{text-align:center;margin-bottom:5px}
+p{text-align:center;font-size:14px;opacity:0.7}
+
+.progress-container{
+    height:6px;
+    background:rgba(255,255,255,0.2);
+    border-radius:10px;
+    cursor:pointer;
+    margin:20px 0 10px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:var(--primary);
+    border-radius:10px;
+    box-shadow:0 0 10px var(--primary);
+}
+
+.time{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+}
+
+.controls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:25px;
+    margin-top:15px;
+}
+
+.controls button{
+    background:none;
+    border:none;
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.controls button:hover{
+    color:var(--primary);
+    transform:scale(1.2);
+}
+
+.play{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:linear-gradient(45deg,var(--primary),var(--secondary));
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    box-shadow:0 0 20px var(--primary);
+}
+
+.volume-box{
+    display:flex;
+    align-items:center;
+    margin-top:15px;
+    gap:10px;
+}
+
+.volume-box i{
+    cursor:pointer;
+}
+
+.volume-box input{
+    flex:1;
+}
+
+.playlist-toggle{
+    text-align:center;
+    margin-top:15px;
+    cursor:pointer;
+    color:var(--primary);
+}
+
+.playlist{
+    max-height:0;
+    overflow:hidden;
+    transition:0.4s;
+    margin-top:10px;
+}
+
+.playlist.show{
+    max-height:200px;
+    overflow-y:auto;
+}
+
+.playlist-item{
+    padding:8px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.playlist-item:hover{
+    background:rgba(255,255,255,0.1);
+}
+
+.playlist-item.active{
+    background:rgba(0,255,255,0.2);
+}
+</style>
 </head>
 
 <body>
-    <div class="music-player">
-        <div class="song-info">
-            <div class="album-art">
-                <img id="current-song-img" src="https://picsum.photos/seed/song1/250/250.jpg" alt="Album Art">
-            </div>
-            <h2 class="song-title" id="current-song-title">Starlight</h2>
-            <p class="artist-name" id="current-artist">Luna Sky</p>
-        </div>
 
-        <div class="progress-container" id="progress-container">
-            <div class="progress" id="progress"></div>
-        </div>
-
-        <div class="time-info">
-            <span id="current-time">0:00</span>
-            <span id="duration">0:00</span>
-        </div>
-
-        <div class="controls">
-            <button id="prev"><i class="fas fa-backward"></i></button>
-            <button id="play-pause" class="play-pause"><i class="fas fa-play" id="play-icon"></i></button>
-            <button id="next"><i class="fas fa-forward"></i></button>
-        </div>
-
-        <div class="volume-container">
-            <div class="volume-icon">
-                <i class="fas fa-volume-up" id="volume-icon"></i>
-            </div>
-            <input type="range" class="volume-slider" id="volume" min="0" max="1" step="0.01" value="0.7">
-        </div>
-
-        <div class="playlist-toggle" id="playlist-toggle">
-            <i class="fas fa-list"></i> Show Playlist
-        </div>
-
-        <div class="playlist" id="playlist">
-            <!-- Playlist items will be added here dynamically -->
-        </div>
+<div class="player">
+    <div class="album">
+        <img id="cover" src="https://picsum.photos/300">
     </div>
 
-    <audio id="audio" src=""></audio>
+    <h2 id="title">Starlight</h2>
+    <p id="artist">Luna Sky</p>
 
-    <script>
-        // DOM Elements
-        const audio = document.getElementById('audio');
-        const playPauseBtn = document.getElementById('play-pause');
-        const playIcon = document.getElementById('play-icon');
-        const prevBtn = document.getElementById('prev');
-        const nextBtn = document.getElementById('next');
-        const progressContainer = document.getElementById('progress-container');
-        const progress = document.getElementById('progress');
-        const currentTimeEl = document.getElementById('current-time');
-        const durationEl = document.getElementById('duration');
-        const volumeSlider = document.getElementById('volume');
-        const volumeIcon = document.getElementById('volume-icon');
-        const playlistToggle = document.getElementById('playlist-toggle');
-        const playlistEl = document.getElementById('playlist');
-        const currentSongTitle = document.getElementById('current-song-title');
-        const currentArtist = document.getElementById('current-artist');
-        const currentSongImg = document.getElementById('current-song-img');
+    <div class="progress-container" id="progress-container">
+        <div class="progress" id="progress"></div>
+    </div>
 
-        // Song playlist
-        const songs = [{
-            title: 'Starlight',
-            artist: 'Luna Sky',
-            path: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-            img: 'https://picsum.photos/seed/song1/250/250.jpg',
-            duration: '3:45'
-        }, {
-            title: 'Midnight Dreams',
-            artist: 'Alex Waves',
-            path: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-            img: 'https://picsum.photos/seed/song2/250/250.jpg',
-            duration: '4:20'
-        }, {
-            title: 'Ocean Breeze',
-            artist: 'Samantha Lee',
-            path: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
-            img: 'https://picsum.photos/seed/song3/250/250.jpg',
-            duration: '3:55'
-        }, {
-            title: 'Electric Soul',
-            artist: 'DJ Maverick',
-            path: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
-            img: 'https://picsum.photos/seed/song4/250/250.jpg',
-            duration: '5:10'
-        }, {
-            title: 'Urban Rhythm',
-            artist: 'Chris Johnson',
-            path: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
-            img: 'https://picsum.photos/seed/song5/250/250.jpg',
-            duration: '4:05'
-        }];
+    <div class="time">
+        <span id="current">0:00</span>
+        <span id="duration">0:00</span>
+    </div>
 
-        // Current song index
-        let songIndex = 0;
-        let isPlaying = false;
-        let isMuted = false;
+    <div class="controls">
+        <button id="prev"><i class="fas fa-backward"></i></button>
+        <button id="play" class="play"><i class="fas fa-play" id="icon"></i></button>
+        <button id="next"><i class="fas fa-forward"></i></button>
+    </div>
 
-        // Initialize the player
-        function initPlayer() {
-            loadSong(songs[songIndex]);
-            createPlaylist();
-            updateVolumeIcon();
-        }
+    <div class="volume-box">
+        <i class="fas fa-volume-up" id="mute"></i>
+        <input type="range" id="volume" min="0" max="1" step="0.01" value="0.7">
+    </div>
 
-        // Load song details
-        function loadSong(song) {
-            currentSongTitle.textContent = song.title;
-            currentArtist.textContent = song.artist;
-            currentSongImg.src = song.img;
-            audio.src = song.path;
-        }
+    <div class="playlist-toggle" id="toggle">
+        <i class="fas fa-list"></i> Show Playlist
+    </div>
 
-        // Create playlist
-        function createPlaylist() {
-            playlistEl.innerHTML = '';
-            songs.forEach((song, index) => {
-                const playlistItem = document.createElement('div');
-                playlistItem.classList.add('playlist-item');
-                if (index === songIndex) {
-                    playlistItem.classList.add('active');
-                }
-                playlistItem.innerHTML = `
-                    <div class="playlist-item-number">${index + 1}</div>
-                    <div class="playlist-item-img">
-                        <img src="${song.img}" alt="${song.title}">
-                    </div>
-                    <div class="playlist-item-info">
-                        <div class="playlist-item-title">${song.title}</div>
-                        <div class="playlist-item-artist">${song.artist}</div>
-                    </div>
-                    <div class="playlist-item-duration">${song.duration}</div>
-                `;
-                playlistItem.addEventListener('click', () => {
-                    songIndex = index;
-                    loadSong(songs[songIndex]);
-                    playSong();
-                    updateActivePlaylistItem();
-                });
-                playlistEl.appendChild(playlistItem);
-            });
-        }
+    <div class="playlist" id="playlist"></div>
+</div>
 
-        // Update active playlist item
-        function updateActivePlaylistItem() {
-            const playlistItems = document.querySelectorAll('.playlist-item');
-            playlistItems.forEach((item, index) => {
-                if (index === songIndex) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            });
-        }
+<audio id="audio"></audio>
 
-        // Play song
-        function playSong() {
-            playIcon.classList.remove('fa-play');
-            playIcon.classList.add('fa-pause');
-            audio.play();
-            isPlaying = true;
-        }
+<script>
+const audio=document.getElementById("audio");
+const playBtn=document.getElementById("play");
+const icon=document.getElementById("icon");
+const progress=document.getElementById("progress");
+const progressContainer=document.getElementById("progress-container");
+const current=document.getElementById("current");
+const durationEl=document.getElementById("duration");
+const cover=document.getElementById("cover");
+const volume=document.getElementById("volume");
+const muteBtn=document.getElementById("mute");
+const playlist=document.getElementById("playlist");
+const toggle=document.getElementById("toggle");
 
-        // Pause song
-        function pauseSong() {
-            playIcon.classList.remove('fa-pause');
-            playIcon.classList.add('fa-play');
-            audio.pause();
-            isPlaying = false;
-        }
+const songs=[
+{title:"Manamagan sathiyam",artist:"A.R.Rahman",src:"songs/Mamanagan_sathiyam.mp3"},
+{title:"Neelothi",artist:"Sooraj Santhosh_ Chinmayi",src:"songs/Neelothi_Song.mp3"},
+{title:"Vaarayo Vaarayo",artist:" Harris Jayaraj _ Chinmayi",src:"songs/Vaarayo_Vaarayo.mp3"}
+];
 
-        // Previous song
-        function prevSong() {
-            songIndex--;
-            if (songIndex < 0) {
-                songIndex = songs.length - 1;
-            }
-            loadSong(songs[songIndex]);
-            if (isPlaying) {
-                playSong();
-            }
-            updateActivePlaylistItem();
-        }
+let index=0;
+let playing=false;
 
-        // Next song
-        function nextSong() {
-            songIndex++;
-            if (songIndex > songs.length - 1) {
-                songIndex = 0;
-            }
-            loadSong(songs[songIndex]);
-            if (isPlaying) {
-                playSong();
-            }
-            updateActivePlaylistItem();
-        }
+function loadSong(song){
+    document.getElementById("title").innerText=song.title;
+    document.getElementById("artist").innerText=song.artist;
+    audio.src=song.src;
+}
+loadSong(songs[index]);
 
-        // Update progress bar
-        function updateProgress(e) {
-            const {
-                duration,
-                currentTime
-            } = e.srcElement;
-            const progressPercent = (currentTime / duration) * 100;
-            progress.style.width = `${progressPercent}%`;
-
-            // Update time display
-            const durationMinutes = Math.floor(duration / 60);
-            let durationSeconds = Math.floor(duration % 60);
-            if (durationSeconds < 10) {
-                durationSeconds = `0${durationSeconds}`;
-            }
-
-            const currentMinutes = Math.floor(currentTime / 60);
-            let currentSeconds = Math.floor(currentTime % 60);
-            if (currentSeconds < 10) {
-                currentSeconds = `0${currentSeconds}`;
-            }
-
-            if (duration) {
-                durationEl.textContent = `${durationMinutes}:${durationSeconds}`;
-            }
-
-            currentTimeEl.textContent = `${currentMinutes}:${currentSeconds}`;
-        }
-
-        // Set progress bar
-        function setProgress(e) {
-            const width = this.clientWidth;
-            const clickX = e.offsetX;
-            const duration = audio.duration;
-            audio.currentTime = (clickX / width) * duration;
-        }
-
-        // Set volume
-        function setVolume() {
-            audio.volume = volumeSlider.value;
-            updateVolumeIcon();
-        }
-
-        // Toggle mute
-        function toggleMute() {
-            if (isMuted) {
-                audio.volume = volumeSlider.value;
-                isMuted = false;
-            } else {
-                audio.volume = 0;
-                isMuted = true;
-            }
-            updateVolumeIcon();
-        }
-
-        // Update volume icon
-        function updateVolumeIcon() {
-            volumeIcon.className = '';
-            if (isMuted || audio.volume === 0) {
-                volumeIcon.className = 'fas fa-volume-mute';
-            } else if (audio.volume > 0.5) {
-                volumeIcon.className = 'fas fa-volume-up';
-            } else {
-                volumeIcon.className = 'fas fa-volume-down';
-            }
-        }
-
-        // Toggle playlist
-        function togglePlaylist() {
-            playlistEl.classList.toggle('show');
-            if (playlistEl.classList.contains('show')) {
-                playlistToggle.innerHTML = '<i class="fas fa-list"></i> Hide Playlist';
-            } else {
-                playlistToggle.innerHTML = '<i class="fas fa-list"></i> Show Playlist';
-            }
-        }
-
-        // Event Listeners
-        playPauseBtn.addEventListener('click', () => {
-            if (isPlaying) {
-                pauseSong();
-            } else {
-                playSong();
-            }
+function createPlaylist(){
+    playlist.innerHTML="";
+    songs.forEach((song,i)=>{
+        const item=document.createElement("div");
+        item.classList.add("playlist-item");
+        item.innerText=(i+1)+". "+song.title+" - "+song.artist;
+        if(i===index) item.classList.add("active");
+        item.addEventListener("click",()=>{
+            index=i;
+            loadSong(songs[index]);
+            playSong();
+            updateActive();
         });
+        playlist.appendChild(item);
+    });
+}
+createPlaylist();
 
-        prevBtn.addEventListener('click', prevSong);
-        nextBtn.addEventListener('click', nextSong);
-        audio.addEventListener('timeupdate', updateProgress);
-        progressContainer.addEventListener('click', setProgress);
-        volumeSlider.addEventListener('input', setVolume);
-        volumeIcon.addEventListener('click', toggleMute);
-        playlistToggle.addEventListener('click', togglePlaylist);
+function updateActive(){
+    document.querySelectorAll(".playlist-item").forEach((item,i)=>{
+        item.classList.toggle("active",i===index);
+    });
+}
 
-        // Auto play next song when current song ends
-        audio.addEventListener('ended', nextSong);
+function playSong(){
+    playing=true;
+    audio.play();
+    icon.classList.replace("fa-play","fa-pause");
+    cover.style.animationPlayState="running";
+}
 
-        // Initialize the player
-        initPlayer();
-    </script>
+function pauseSong(){
+    playing=false;
+    audio.pause();
+    icon.classList.replace("fa-pause","fa-play");
+    cover.style.animationPlayState="paused";
+}
+
+playBtn.addEventListener("click",()=>{playing?pauseSong():playSong();});
+
+audio.addEventListener("timeupdate",(e)=>{
+    const {duration,currentTime}=e.target;
+    const percent=(currentTime/duration)*100;
+    progress.style.width=percent+"%";
+
+    let curMin=Math.floor(currentTime/60);
+    let curSec=Math.floor(currentTime%60);
+    if(curSec<10)curSec="0"+curSec;
+    current.innerText=curMin+":"+curSec;
+
+    if(duration){
+        let durMin=Math.floor(duration/60);
+        let durSec=Math.floor(duration%60);
+        if(durSec<10)durSec="0"+durSec;
+        durationEl.innerText=durMin+":"+durSec;
+    }
+});
+
+progressContainer.addEventListener("click",(e)=>{
+    const width=progressContainer.clientWidth;
+    const clickX=e.offsetX;
+    audio.currentTime=(clickX/width)*audio.duration;
+});
+
+document.getElementById("prev").addEventListener("click",()=>{
+    index=(index-1+songs.length)%songs.length;
+    loadSong(songs[index]);
+    playSong();
+    updateActive();
+});
+
+document.getElementById("next").addEventListener("click",()=>{
+    index=(index+1)%songs.length;
+    loadSong(songs[index]);
+    playSong();
+    updateActive();
+});
+
+volume.addEventListener("input",()=>audio.volume=volume.value);
+
+muteBtn.addEventListener("click",()=>{
+    audio.muted=!audio.muted;
+    muteBtn.classList.toggle("fa-volume-mute");
+    muteBtn.classList.toggle("fa-volume-up");
+});
+
+toggle.addEventListener("click",()=>{
+    playlist.classList.toggle("show");
+    toggle.innerHTML=playlist.classList.contains("show")
+        ? '<i class="fas fa-list"></i> Hide Playlist'
+        : '<i class="fas fa-list"></i> Show Playlist';
+});
+
+audio.addEventListener("ended",()=>{
+    index=(index+1)%songs.length;
+    loadSong(songs[index]);
+    playSong();
+    updateActive();
+});
+</script>
+
 </body>
-
 </html>
