@@ -181,7 +181,7 @@ p{text-align:center;font-size:14px;opacity:0.7}
 
 <div class="player">
     <div class="album">
-        <img id="cover" src="https://picsum.photos/300">
+        <img id="cover" src="">
     </div>
 
     <h2 id="title">Starlight</h2>
@@ -217,48 +217,70 @@ p{text-align:center;font-size:14px;opacity:0.7}
 <audio id="audio"></audio>
 
 <script>
-const audio=document.getElementById("audio");
-const playBtn=document.getElementById("play");
-const icon=document.getElementById("icon");
-const progress=document.getElementById("progress");
-const progressContainer=document.getElementById("progress-container");
-const current=document.getElementById("current");
-const durationEl=document.getElementById("duration");
-const cover=document.getElementById("cover");
-const volume=document.getElementById("volume");
-const muteBtn=document.getElementById("mute");
-const playlist=document.getElementById("playlist");
-const toggle=document.getElementById("toggle");
+const audio = document.getElementById("audio");
+const playBtn = document.getElementById("play");
+const icon = document.getElementById("icon");
+const progress = document.getElementById("progress");
+const progressContainer = document.getElementById("progress-container");
+const current = document.getElementById("current");
+const durationEl = document.getElementById("duration");
+const cover = document.getElementById("cover");
+const volume = document.getElementById("volume");
+const muteBtn = document.getElementById("mute");
+const playlist = document.getElementById("playlist");
+const toggle = document.getElementById("toggle");
 
-const songs=[
-{title:"Manamagan sathiyam",artist:"A.R.Rahman",src:"songs/Mamanagan_sathiyam.mp3"},
-{title:"Neelothi",artist:"Sooraj Santhosh_ Chinmayi",src:"songs/Neelothi_Song.mp3"},
-{title:"Vaarayo Vaarayo",artist:" Harris Jayaraj _ Chinmayi",src:"songs/Vaarayo_Vaarayo.mp3"}
+const songs = [
+{
+title: "Manamagan Sathiyam",
+artist: "A.R.Rahman",
+src: "songs/Mamanagan_sathiyam.mp3",
+cover: "images/Mananagan_sathiyam.jpg"
+},
+{
+title: "Neelothi",
+artist: "Sooraj Santhosh, Chinmayi",
+src: "songs/Neelothi_Song.mp3",
+cover: "images/Neelothi.jpg"
+},
+{
+title: "Vaarayo Vaarayo",
+artist: "Harris Jayaraj, Chinmayi",
+src: "songs/Vaarayo_Vaarayo.mp3",
+cover: "images/Varayo_varayo.jpg"
+}
 ];
 
-let index=0;
-let playing=false;
+let index = 0;
+let playing = false;
 
 function loadSong(song){
-    document.getElementById("title").innerText=song.title;
-    document.getElementById("artist").innerText=song.artist;
-    audio.src=song.src;
+    document.getElementById("title").innerText = song.title;
+    document.getElementById("artist").innerText = song.artist;
+    audio.src = song.src;
+
+    /* FIX: change album image */
+    cover.src = song.cover;
 }
+
 loadSong(songs[index]);
 
 function createPlaylist(){
-    playlist.innerHTML="";
+    playlist.innerHTML = "";
     songs.forEach((song,i)=>{
-        const item=document.createElement("div");
+        const item = document.createElement("div");
         item.classList.add("playlist-item");
-        item.innerText=(i+1)+". "+song.title+" - "+song.artist;
-        if(i===index) item.classList.add("active");
+        item.innerText = (i+1)+". "+song.title+" - "+song.artist;
+
+        if(i === index) item.classList.add("active");
+
         item.addEventListener("click",()=>{
-            index=i;
+            index = i;
             loadSong(songs[index]);
             playSong();
             updateActive();
         });
+
         playlist.appendChild(item);
     });
 }
@@ -266,81 +288,91 @@ createPlaylist();
 
 function updateActive(){
     document.querySelectorAll(".playlist-item").forEach((item,i)=>{
-        item.classList.toggle("active",i===index);
+        item.classList.toggle("active", i === index);
     });
 }
 
 function playSong(){
-    playing=true;
+    playing = true;
     audio.play();
     icon.classList.replace("fa-play","fa-pause");
-    cover.style.animationPlayState="running";
+    cover.style.animationPlayState = "running";
 }
 
 function pauseSong(){
-    playing=false;
+    playing = false;
     audio.pause();
     icon.classList.replace("fa-pause","fa-play");
-    cover.style.animationPlayState="paused";
+    cover.style.animationPlayState = "paused";
 }
 
-playBtn.addEventListener("click",()=>{playing?pauseSong():playSong();});
+playBtn.addEventListener("click",()=>{
+    playing ? pauseSong() : playSong();
+});
 
 audio.addEventListener("timeupdate",(e)=>{
-    const {duration,currentTime}=e.target;
-    const percent=(currentTime/duration)*100;
-    progress.style.width=percent+"%";
+    const {duration,currentTime} = e.target;
 
-    let curMin=Math.floor(currentTime/60);
-    let curSec=Math.floor(currentTime%60);
-    if(curSec<10)curSec="0"+curSec;
-    current.innerText=curMin+":"+curSec;
+    const percent = (currentTime/duration)*100;
+    progress.style.width = percent+"%";
+
+    let curMin = Math.floor(currentTime/60);
+    let curSec = Math.floor(currentTime%60);
+    if(curSec<10) curSec = "0"+curSec;
+
+    current.innerText = curMin+":"+curSec;
 
     if(duration){
-        let durMin=Math.floor(duration/60);
-        let durSec=Math.floor(duration%60);
-        if(durSec<10)durSec="0"+durSec;
-        durationEl.innerText=durMin+":"+durSec;
+        let durMin = Math.floor(duration/60);
+        let durSec = Math.floor(duration%60);
+        if(durSec<10) durSec = "0"+durSec;
+        durationEl.innerText = durMin+":"+durSec;
     }
 });
 
 progressContainer.addEventListener("click",(e)=>{
-    const width=progressContainer.clientWidth;
-    const clickX=e.offsetX;
-    audio.currentTime=(clickX/width)*audio.duration;
+    const width = progressContainer.clientWidth;
+    const clickX = e.offsetX;
+
+    audio.currentTime = (clickX/width)*audio.duration;
 });
 
 document.getElementById("prev").addEventListener("click",()=>{
-    index=(index-1+songs.length)%songs.length;
+    index = (index-1 + songs.length) % songs.length;
+
     loadSong(songs[index]);
     playSong();
     updateActive();
 });
 
 document.getElementById("next").addEventListener("click",()=>{
-    index=(index+1)%songs.length;
+    index = (index+1) % songs.length;
+
     loadSong(songs[index]);
     playSong();
     updateActive();
 });
 
-volume.addEventListener("input",()=>audio.volume=volume.value);
+volume.addEventListener("input",()=>{
+    audio.volume = volume.value;
+});
 
 muteBtn.addEventListener("click",()=>{
-    audio.muted=!audio.muted;
+    audio.muted = !audio.muted;
     muteBtn.classList.toggle("fa-volume-mute");
     muteBtn.classList.toggle("fa-volume-up");
 });
 
 toggle.addEventListener("click",()=>{
     playlist.classList.toggle("show");
-    toggle.innerHTML=playlist.classList.contains("show")
-        ? '<i class="fas fa-list"></i> Hide Playlist'
-        : '<i class="fas fa-list"></i> Show Playlist';
+
+    toggle.innerHTML = playlist.classList.contains("show")
+    ? '<i class="fas fa-list"></i> Hide Playlist'
+    : '<i class="fas fa-list"></i> Show Playlist';
 });
 
 audio.addEventListener("ended",()=>{
-    index=(index+1)%songs.length;
+    index = (index+1) % songs.length;
     loadSong(songs[index]);
     playSong();
     updateActive();
